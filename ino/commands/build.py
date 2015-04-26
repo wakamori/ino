@@ -125,6 +125,10 @@ class Build(Command):
         self.e.find_dir('arduino_core_dir', [core_header], [core_place],
                         human_name='Arduino core library')
 
+        library_place = os.path.join(board['_coredir'], 'libraries')
+        self.e.find_dir('arduino_avr_libraries_dir', ['.'], [library_place],
+                        human_name='Arduino avr libraries')
+
         if self.e.arduino_lib_version.major:
             variants_place = os.path.join(board['_coredir'], 'variants')
             self.e.find_dir('arduino_variants_dir', ['.'], [variants_place],
@@ -246,7 +250,9 @@ class Build(Command):
     def scan_dependencies(self):
         self.e['deps'] = SpaceList()
 
-        lib_dirs = [self.e.arduino_core_dir] + list_subdirs(self.e.lib_dir) + list_subdirs(self.e.arduino_libraries_dir)
+        lib_dirs = [self.e.arduino_core_dir] + list_subdirs(self.e.lib_dir) + \
+        list_subdirs(self.e.arduino_libraries_dir) + \
+        list_subdirs(self.e['arduino_avr_libraries_dir'])
         inc_flags = self.recursive_inc_lib_flags(lib_dirs)
 
         # If lib A depends on lib B it have to appear before B in final
